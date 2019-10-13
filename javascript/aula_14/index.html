@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>List Github Repos</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Github Repos</h1>
+  </div>
+  <div class="container">
+    <span id="repos"></span>
+  </div>
+
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+
+  <script type="text/babel">
+    function App() {
+      const [repos, setRepos] = React.useState([])
+
+      React.useEffect(() => {
+        getRepos().then(data => {
+          setRepos(data)
+        }).catch(error => {
+          alert('Erro')
+          console.log(error)
+        })
+      }, [])
+
+      async function getRepos() {
+        try {
+          const response = await axios.get('https://api.github.com/users/codeeasy-dev/repos')
+          return response.data
+        } catch(error) {
+          console.log(error)
+        }
+      }
+
+      return (
+        <ul className="repos-list">
+          {
+            repos.map(repo => {
+              return (
+                <li key={repo.id}>
+                  {repo.name}:
+                  <a href={repo.html_url} target={"_blank"}>{repo.html_url}</a>
+                </li>
+              )
+            })
+          }
+        </ul>
+      )
+    }
+
+    ReactDOM.render(<App/>, document.getElementById('repos'))
+  </script>
+
+</body>
+</html>
